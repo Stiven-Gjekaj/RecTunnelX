@@ -13,7 +13,6 @@ enum {
 @property (nonatomic, strong) NSDictionary *status;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) UISwitch *enabledSwitch;
-@property (nonatomic, strong) UISwitch *audioSwitch;
 @property (nonatomic, strong) UISegmentedControl *fpsControl;
 @property (nonatomic, strong) UISegmentedControl *sizeControl;
 @property (nonatomic, strong) UISegmentedControl *bitrateControl;
@@ -36,8 +35,6 @@ static NSArray *RXBitrateValues(void) { return @[ @1500000, @3000000, @6000000 ]
     [super viewDidLoad];
     self.enabledSwitch = [UISwitch new];
     [self.enabledSwitch addTarget:self action:@selector(enabledChanged) forControlEvents:UIControlEventValueChanged];
-    self.audioSwitch = [UISwitch new];
-    [self.audioSwitch addTarget:self action:@selector(audioChanged) forControlEvents:UIControlEventValueChanged];
     self.fpsControl = [self segmentsWithItems:@[ @"15", @"24", @"30" ] action:@selector(fpsChanged)];
     self.sizeControl = [self segmentsWithItems:@[ @"640x960", @"320x480" ] action:@selector(sizeChanged)];
     self.bitrateControl = [self segmentsWithItems:@[ @"1.5", @"3", @"6" ] action:@selector(bitrateChanged)];
@@ -80,7 +77,6 @@ static NSArray *RXBitrateValues(void) { return @[ @1500000, @3000000, @6000000 ]
     NSDictionary *settings = self.settings;
     if (!settings) return;
     self.enabledSwitch.on = [settings[@"enabled"] boolValue];
-    self.audioSwitch.on = [settings[@"audio"] boolValue];
     NSUInteger fps = [RXFpsValues() indexOfObject:settings[@"fps"]];
     self.fpsControl.selectedSegmentIndex = fps == NSNotFound ? UISegmentedControlNoSegment : (NSInteger)fps;
     self.sizeControl.selectedSegmentIndex = [settings[@"scale"] intValue] == 2 ? 1 : 0;
@@ -100,10 +96,6 @@ static NSArray *RXBitrateValues(void) { return @[ @1500000, @3000000, @6000000 ]
 
 - (void)enabledChanged {
     [self send:@{ @"enabled": self.enabledSwitch.on ? @"1" : @"0" }];
-}
-
-- (void)audioChanged {
-    [self send:@{ @"audio": self.audioSwitch.on ? @"1" : @"0" }];
 }
 
 - (void)fpsChanged {
@@ -147,7 +139,7 @@ static NSArray *RXBitrateValues(void) { return @[ @1500000, @3000000, @6000000 ]
     switch (section) {
     case RXSectionStream: return 2;
     case RXSectionConnect: return (NSInteger)self.connectRows.count;
-    default: return 4;
+    default: return 3;
     }
 }
 
@@ -190,8 +182,8 @@ static NSArray *RXBitrateValues(void) { return @[ @1500000, @3000000, @6000000 ]
         cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     } else {
-        NSArray *titles = @[ @"Frames/s", @"Size", @"Mbit/s", @"System audio" ];
-        NSArray *views = @[ self.fpsControl, self.sizeControl, self.bitrateControl, self.audioSwitch ];
+        NSArray *titles = @[ @"Frames/s", @"Size", @"Mbit/s" ];
+        NSArray *views = @[ self.fpsControl, self.sizeControl, self.bitrateControl ];
         cell.textLabel.text = titles[indexPath.row];
         cell.accessoryView = views[indexPath.row];
         ((UIControl *)views[indexPath.row]).enabled = self.status != nil;
