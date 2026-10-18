@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/brand/logo.svg" alt="RecTunnelX" width="440">
-
-### The screen of the iPhone 4S in OBS
+<img src="assets/brand/banner.png" alt="RecTunnelX: the screen of the iPhone 4S in OBS" width="760">
 
 _Hardware H.264 over USB or Wi-Fi, from a jailbroken phone on iOS 6_
 
