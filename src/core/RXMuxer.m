@@ -7,11 +7,9 @@
     BOOL _hasOrigin;
 }
 
-- (instancetype)initWithAudio:(BOOL)hasAudio {
+- (instancetype)init {
     if ((self = [super init])) {
-        _hasAudio = hasAudio;
         _writer = [RXTSWriter new];
-        _writer.hasAudio = hasAudio;
     }
     return self;
 }
@@ -39,14 +37,6 @@
         int64_t t = [self streamTime:pts];
         if (isSync) [_writer writeTables];
         [_writer writeVideo:annexB pts:t dts:t isSync:isSync];
-        return [self take];
-    }
-}
-
-- (NSData *)muxAudio:(NSData *)adts pts90k:(int64_t)pts {
-    @synchronized (self) {
-        if (!_hasAudio || !_hasOrigin) return [NSData data];
-        [_writer writeAudio:adts pts:[self streamTime:pts]];
         return [self take];
     }
 }

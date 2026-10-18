@@ -20,14 +20,13 @@ static int64_t PacketPts(const uint8_t *p) {
 }
 
 RX_TEST(test_muxer_waits_for_first_key_frame) {
-    RXMuxer *muxer = [[RXMuxer alloc] initWithAudio:NO];
+    RXMuxer *muxer = [RXMuxer new];
     RX_EQUAL_INT([muxer muxVideo:Frame() pts90k:1000 isSync:NO].length, 0);
-    RX_EQUAL_INT([muxer muxAudio:Frame() pts90k:1000].length, 0);
     RX_EXPECT([muxer muxVideo:Frame() pts90k:2000 isSync:YES].length > 0);
 }
 
 RX_TEST(test_muxer_key_frame_starts_with_tables) {
-    RXMuxer *muxer = [[RXMuxer alloc] initWithAudio:NO];
+    RXMuxer *muxer = [RXMuxer new];
     NSData *key = [muxer muxVideo:Frame() pts90k:5000 isSync:YES];
     RX_EQUAL_INT(key.length % RXTSPacketSize, 0);
     const uint8_t *b = key.bytes;
@@ -40,17 +39,9 @@ RX_TEST(test_muxer_key_frame_starts_with_tables) {
 }
 
 RX_TEST(test_muxer_times_start_at_one_second) {
-    RXMuxer *muxer = [[RXMuxer alloc] initWithAudio:NO];
+    RXMuxer *muxer = [RXMuxer new];
     NSData *key = [muxer muxVideo:Frame() pts90k:123456789 isSync:YES];
     RX_EQUAL_INT(PacketPts((const uint8_t *)key.bytes + 2 * RXTSPacketSize), 90000);
     NSData *next = [muxer muxVideo:Frame() pts90k:123456789 + 3000 isSync:NO];
     RX_EQUAL_INT(PacketPts(next.bytes), 93000);
-}
-
-RX_TEST(test_muxer_audio_has_its_pid) {
-    RXMuxer *muxer = [[RXMuxer alloc] initWithAudio:YES];
-    [muxer muxVideo:Frame() pts90k:0 isSync:YES];
-    NSData *audio = [muxer muxAudio:Frame() pts90k:1500];
-    RX_EQUAL_INT(Pid(audio.bytes), RXTSPidAudio);
-    RX_EQUAL_INT(PacketPts(audio.bytes), 91500);
 }
