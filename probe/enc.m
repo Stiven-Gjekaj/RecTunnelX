@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
         __block int frames = 0, keyFrames = 0;
         __block int64_t firstPts = -1;
         __block size_t bytes = 0;
+        __block int64_t encodeDelay = 0;
         NSObject *lock = [NSObject new];
         RXEncoder *encoder = [[RXEncoder alloc] initWithWidth:width height:height framesPerSecond:fps
             bitsPerSecond:bitrate output:^(NSData *annexB, int64_t pts, BOOL isSync) {
@@ -49,6 +50,7 @@ int main(int argc, char **argv) {
                     frames++;
                     if (isSync) keyFrames++;
                     bytes += annexB.length;
+                    encodeDelay += now90k() - pts;
                 }
             }];
         error = [encoder start];
@@ -118,6 +120,7 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "enc: cannot write %s\n", argv[1]);
                 return 1;
             }
+            if (frames > 0) printf("encoder delay: mean %.1f ms\n", encodeDelay / 90.0 / frames);
             printf("wrote %s: %lu bytes\n", argv[1], (unsigned long)writer.output.length);
         }
         CVPixelBufferPoolRelease(pool);
