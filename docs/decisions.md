@@ -34,6 +34,23 @@ OBS shows the screen and records it.
 - Reason: the daemon continues to capture when another app is open.
   iOS 6 stops an app that is in the background.
 
+## The screen capture
+
+- `IOMobileFramebufferGetMainDisplay` and
+  `IOMobileFramebufferGetLayerDefaultSurface(fb, 0)` give the screen surface.
+- The surface is 640x960, BGRA, 2560 bytes for each row.
+- Layers 1 and 2 have no surface (kr -536870212).
+- The accelerator (`IOSurfaceAcceleratorTransferSurface`) copies the screen
+  into a surface of our own at 173.7 fps. A CPU copy gives 82.4 fps.
+- The capture uses the accelerator.
+- iOS 6 has the accelerator functions in `IOSurface.framework`.
+  It has no `IOSurfaceAccelerator.framework`.
+- The probe gets all functions with `dlsym`. It runs as root, with no
+  entitlements, after `ldid -S`.
+- Measured with `probe/cap.m`, 60 frames, home screen, on 2026-10-18.
+- Not known yet: does the seed of the screen surface change on each new frame?
+  The seed stayed at 86871 while the screen did not change.
+
 ## The audio
 
 - The stream carries the system audio, as AAC in the MPEG-TS.
