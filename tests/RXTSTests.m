@@ -43,21 +43,14 @@ RX_TEST(test_ts_tables_have_valid_crc) {
     }
 }
 
-RX_TEST(test_ts_pmt_lists_streams) {
+RX_TEST(test_ts_pmt_lists_the_video_stream) {
     RXTSWriter *writer = [RXTSWriter new];
     [writer writeTables];
     const uint8_t *pmt = (const uint8_t *)writer.output.bytes + RXTSPacketSize + 5;
     RX_EQUAL_INT(pmt[0], 0x02);
-    RX_EQUAL_INT(pmt[12], 0x1b);
+    RX_EQUAL_INT(((pmt[1] & 0x0f) << 8) | pmt[2], 18);  // the section length
+    RX_EQUAL_INT(pmt[12], 0x1b);  // H.264
     RX_EQUAL_INT(((pmt[13] & 0x1f) << 8) | pmt[14], RXTSPidVideo);
-    RX_EQUAL_INT(pmt[17], 0x0f);
-    RX_EQUAL_INT(((pmt[18] & 0x1f) << 8) | pmt[19], RXTSPidAudio);
-
-    RXTSWriter *videoOnly = [RXTSWriter new];
-    videoOnly.hasAudio = NO;
-    [videoOnly writeTables];
-    const uint8_t *short_ = (const uint8_t *)videoOnly.output.bytes + RXTSPacketSize + 5;
-    RX_EQUAL_INT(((short_[1] & 0x0f) << 8) | short_[2], 18);
 }
 
 RX_TEST(test_ts_annexb_adds_delimiter_and_parameter_sets) {
@@ -85,14 +78,6 @@ RX_TEST(test_ts_annexb_refuses_wrong_length) {
     RX_EXPECT(RXTSAnnexB(zero, sizeof(zero), 4, @[], @[], NO) == nil);
 }
 
-RX_TEST(test_ts_adts_header) {
-    uint8_t header[7];
-    RXTSWriteADTSHeader(header, 2, 4, 2, 371);  // AAC LC, 44100 Hz, stereo
-    // ffmpeg writes this header for a frame of 371 bytes: ff f1 50 80 2f 5f fc
-    const uint8_t expected[] = { 0xff, 0xf1, 0x50, 0x80, 0x2f, 0x5f, 0xfc };
-    RX_EQUAL([NSData dataWithBytes:header length:7], [NSData dataWithBytes:expected length:7]);
-}
-
 RX_TEST(test_ts_video_pes_round_trips) {
     for (NSUInteger size = 1; size < 1200; size += 37) {
         NSMutableData *frame = [NSMutableData dataWithLength:size];
@@ -117,24 +102,11 @@ RX_TEST(test_ts_video_pes_round_trips) {
     }
 }
 
-RX_TEST(test_ts_audio_pes_has_length_and_pts) {
-    NSData *frames = [NSMutableData dataWithLength:500];
+RX_TEST(test_ts_continuity_counts_up_for_the_video_pid) {
     RXTSWriter *writer = [RXTSWriter new];
-    [writer writeAudio:frames pts:123456];
-    int packets = 0;
-    NSData *payload = PayloadOfPid(writer.output, RXTSPidAudio, &packets);
-    const uint8_t *p = payload.bytes;
-    RX_EQUAL_INT(p[3], 0xc0);
-    RX_EQUAL_INT((p[4] << 8) | p[5], 500 + 8);
-    RX_EQUAL_INT(p[7], 0x80);
-    RX_EQUAL_INT(ReadTimestamp(p + 9), 123456);
-    RX_EQUAL_INT(payload.length, 14 + 500);
-    RX_EQUAL_INT(packets, 3);
-}
-
-RX_TEST(test_ts_continuity_counts_up_for_each_pid) {
-    RXTSWriter *writer = [RXTSWriter new];
-    for (int i = 0; i < 20; i++) [writer writeAudio:[NSMutableData dataWithLength:100] pts:i];
+    // Each 100-byte frame fits in one transport packet.
+    for (int i = 0; i < 20; i++) [writer writeVideo:[NSMutableData dataWithLength:100] pts:i dts:i isSync:NO];
     const uint8_t *b = writer.output.bytes;
+    RX_EQUAL_INT(writer.output.length, 20 * RXTSPacketSize);
     for (int i = 0; i < 20; i++) RX_EQUAL_INT(b[i * RXTSPacketSize + 3] & 0x0f, i % 16);
 }

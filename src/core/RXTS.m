@@ -39,36 +39,23 @@ NSData *RXTSAnnexB(const uint8_t *sample, size_t length, int nalLengthSize, NSAr
     return out;
 }
 
-void RXTSWriteADTSHeader(uint8_t header[7], int audioObjectType, int sampleRateIndex, int channelConfig,
-                         size_t frameLength) {
-    size_t total = frameLength + 7;
-    header[0] = 0xff;
-    header[1] = 0xf1;  // MPEG-4, layer 0, no CRC
-    header[2] = (uint8_t)(((audioObjectType - 1) << 6) | (sampleRateIndex << 2) | (channelConfig >> 2));
-    header[3] = (uint8_t)(((channelConfig & 3) << 6) | (total >> 11));
-    header[4] = (uint8_t)((total >> 3) & 0xff);
-    header[5] = (uint8_t)(((total & 7) << 5) | 0x1f);
-    header[6] = 0xfc;
-}
-
 @interface RXTSWriter ()
 @property (nonatomic, strong) NSMutableData *output;
 @end
 
 @implementation RXTSWriter {
-    uint8_t _continuity[3];  // PMT, video, audio
+    uint8_t _continuity[2];  // PMT, video
 }
 
 - (instancetype)init {
     if ((self = [super init])) {
         _output = [NSMutableData data];
-        _hasAudio = YES;
     }
     return self;
 }
 
 - (uint8_t)nextContinuityForPid:(uint16_t)pid {
-    int slot = pid == RXTSPidVideo ? 1 : pid == RXTSPidAudio ? 2 : 0;
+    int slot = pid == RXTSPidVideo ? 1 : 0;
     uint8_t value = _continuity[slot];
     _continuity[slot] = (value + 1) & 0x0f;
     return value;
@@ -119,13 +106,6 @@ void RXTSWriteADTSHeader(uint8_t header[7], int audioObjectType, int sampleRateI
     pmt[n++] = RXTSPidVideo & 0xff;
     pmt[n++] = 0xf0;
     pmt[n++] = 0x00;
-    if (self.hasAudio) {
-        pmt[n++] = 0x0f;  // AAC in ADTS
-        pmt[n++] = 0xe0 | (RXTSPidAudio >> 8);
-        pmt[n++] = RXTSPidAudio & 0xff;
-        pmt[n++] = 0xf0;
-        pmt[n++] = 0x00;
-    }
     size_t sectionLength = n - 3 + 4;  // after the length field, with the CRC
     pmt[1] = 0xb0 | ((sectionLength >> 8) & 0x0f);
     pmt[2] = sectionLength & 0xff;
@@ -245,10 +225,6 @@ static void RXWriteTimestamp(uint8_t *p, uint8_t marker, int64_t time) {
 
 - (void)writeVideo:(NSData *)annexB pts:(int64_t)pts dts:(int64_t)dts isSync:(BOOL)isSync {
     [self writePES:annexB pid:RXTSPidVideo streamId:0xe0 pts:pts dts:dts isSync:isSync];
-}
-
-- (void)writeAudio:(NSData *)adtsFrames pts:(int64_t)pts {
-    [self writePES:adtsFrames pid:RXTSPidAudio streamId:0xc0 pts:pts dts:pts isSync:NO];
 }
 
 @end
