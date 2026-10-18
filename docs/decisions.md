@@ -51,6 +51,26 @@ OBS shows the screen and records it.
 - Not known yet: does the seed of the screen surface change on each new frame?
   The seed stayed at 86871 while the screen did not change.
 
+## The video encoder
+
+- iOS 6 has `VTCompressionSessionCreate` and the other functions of the
+  compression session in `VideoToolbox.framework`. They are private on iOS 6,
+  so the code gets them with `dlsym`. The signatures are the same as on
+  iOS 8.
+- The encoder accepts the property keys `RealTime`, `ProfileLevel`
+  (`H264_Baseline_AutoLevel`), `AllowFrameReordering`, `AverageBitRate`,
+  `ExpectedFrameRate`, and `MaxKeyFrameInterval`. Each one gave status 0.
+- The encoder takes BGRA pixel buffers directly. A 420v buffer also works.
+- The output is H.264 Baseline, level 3.1, 640x960, with no B-frames.
+- The format description has the SPS and the PPS in an `avcC` atom.
+  `CMVideoFormatDescriptionGetH264ParameterSetAtIndex` is not on iOS 6, so
+  `RXAVCConfig` reads the atom.
+- Measured with `probe/enc.m` at 30 fps and 3 Mbit/s: 300 frames of 300 in
+  10.01 s. `ffprobe` on the Mac reads the MPEG-TS file and counts 300 frames.
+- The screen is black when the display sleeps. The copy then gives Y=16 in
+  a 420v buffer. `activator send libactivator.system.homebutton` wakes it for
+  a test.
+
 ## The audio
 
 - The stream carries the system audio, as AAC in the MPEG-TS.
