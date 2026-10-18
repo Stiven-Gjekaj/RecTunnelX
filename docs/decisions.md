@@ -89,15 +89,15 @@ OBS shows the screen and records it.
 
 ## The daemon and launchd
 
-- On the test phone, `/var/tmp/launchd` is gone. A cleaner probably removed
-  it. Without that socket, `launchctl load` fails with "Socket is not
-  connected" and still exits with 0. `launchctl list` still works.
+- Over ssh, `launchctl load` fails with "Socket is not connected" and still
+  exits with 0. `launchctl unload` and `launchctl list` work.
+- This stays the same after a clean reboot, so a cleaner is not the cause.
+  The ssh session of this jailbreak cannot send a load to launchd.
 - `launchctl bsexec 1` fails, because `task_for_pid` of launchd is refused.
+- At boot, launchd starts the daemon from `/Library/LaunchDaemons`. This was
+  checked after a reboot on 2026-10-18.
 - So `postinst` looks for the job in `launchctl list`. If it is not there,
-  `postinst` starts the daemon with `nohup`. launchd starts it at the next
-  boot from `/Library/LaunchDaemons`.
-- Reason: a reboot of the shared test phone stops the work of the other
-  projects.
+  `postinst` starts the daemon with `nohup`.
 
 ## The network
 
@@ -117,3 +117,17 @@ OBS shows the screen and records it.
 - The median of 5 tries is 625 ms over USB at 30 fps and 3 Mbit/s. This time
   includes Activator and the start of the animation of SpringBoard.
 - `probe/enc.m` measures 26.6 ms from a frame to its encoded output.
+
+## OBS
+
+- OBS 32.1.2 on macOS reads `tcp://127.0.0.1:7272` with a Media Source.
+- The source uses: Input Format `mpegts`, Network Buffering 0 MB, Reconnect
+  Delay 2 s, hardware decoding, and the FFmpeg Options
+  `fflags=nobuffer flags=low_delay probesize=32768 analyzeduration=0`.
+  These options stop ffmpeg from waiting to fill a buffer before it shows
+  a frame.
+- The canvas and the output are 640x960 at 30 fps, the same as the stream.
+  OBS then does not scale the picture.
+- The stream and the recording use the Apple hardware H.264 encoder of the
+  Mac. The Mic/Auxiliary device is off, because the stream has no audio.
+- A recording of 10.73 s had 321 frames at 640x960, 29.9 fps.
