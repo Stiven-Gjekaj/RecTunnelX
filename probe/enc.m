@@ -34,7 +34,6 @@ int main(int argc, char **argv) {
         int width = (int)screen.width, height = (int)screen.height;
 
         RXTSWriter *writer = [RXTSWriter new];
-        writer.hasAudio = NO;
         __block int frames = 0, keyFrames = 0;
         __block int64_t firstPts = -1;
         __block size_t bytes = 0;

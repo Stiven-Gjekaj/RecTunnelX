@@ -123,7 +123,7 @@ static NSArray *RXAddresses(void) {
         // A new size, rate, or bitrate needs a new encoder.
         BOOL restart = before.framesPerSecond != self.settings.framesPerSecond ||
                        before.bitsPerSecond != self.settings.bitsPerSecond ||
-                       before.scale != self.settings.scale || before.audio != self.settings.audio;
+                       before.scale != self.settings.scale;
         if (restart) [self stopCaptureLocked];
         [self updateLocked];
         result = self.settings.dictionary;
@@ -175,7 +175,7 @@ static NSArray *RXAddresses(void) {
     int scale = self.settings.scale;
     int width = (int)self.screen.width / scale, height = (int)self.screen.height / scale;
     int fps = self.settings.framesPerSecond;
-    RXMuxer *muxer = [[RXMuxer alloc] initWithAudio:NO];
+    RXMuxer *muxer = [RXMuxer new];
     RXStreamServer *server = self.server;
     __block int64_t frames = 0, bytes = 0;
     RXStreamer *streamer = self;
