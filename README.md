@@ -27,8 +27,8 @@ _Hardware H.264 over USB or Wi-Fi, from a jailbroken phone on iOS 6_
 ---
 
 > [!NOTE]
-> **Version 0.1.0 is out.** It sends the video of the screen to OBS at up to
-> 30 frames per second. The system audio comes in a later version.
+> **Version 0.2.0 is out.** It sends the video of the screen to OBS at up to
+> 30 frames per second. The stream has no audio.
 > [TODO.md](TODO.md) lists the known problems.
 > [docs/decisions.md](docs/decisions.md) holds each decision and its reason.
 

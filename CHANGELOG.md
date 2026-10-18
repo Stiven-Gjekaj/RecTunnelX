@@ -6,6 +6,15 @@ From 1.0.0, a fix raises the patch number, and a new function raises the
 minor number.
 Each release on GitHub has the `.deb` package as an asset.
 
+## 0.2.0 (2026-10-18)
+
+Remove all audio.
+
+- The stream is video only. The audio setting, the audio switch in the app,
+  and the audio path of the muxer and the MPEG-TS writer are gone.
+- The PMT lists only the video stream.
+- Reason: the owner asked to remove all audio.
+
 ## 0.1.0 (2026-10-18)
 
 The first release: the video of the screen in OBS.

@@ -5,8 +5,8 @@ is in [docs/decisions.md](docs/decisions.md).
 
 ## Next
 
-- The system audio: a MobileSubstrate tweak in `mediaserverd` takes the sound
-  that the apps play. The daemon encodes it to AAC and puts it in the stream.
+- No task is chosen now. The stream is video only, and the owner does not
+  want audio in it.
 
 ## Known problems
 

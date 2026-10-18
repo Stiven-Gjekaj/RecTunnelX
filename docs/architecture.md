@@ -50,7 +50,7 @@ frames that are late, so the stream keeps the real time.
 | `GET /status` | JSON: the settings, the clients, the size, the frames, the addresses. |
 | `GET /control?KEY=VALUE` | Changes the settings. Only from `127.0.0.1`. |
 
-The keys of `/control` are `enabled`, `audio` (yes or no), `fps` (5 to 60),
+The keys of `/control` are `enabled` (yes or no), `fps` (5 to 60),
 `bitrate` (250000 to 10000000), and `scale` (1 or 2).
 
 The capture and the encoder run only while the stream is enabled and at

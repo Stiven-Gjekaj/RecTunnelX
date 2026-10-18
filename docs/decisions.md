@@ -71,12 +71,14 @@ OBS shows the screen and records it.
   a 420v buffer. `activator send libactivator.system.homebutton` wakes it for
   a test.
 
-## The audio
+## No audio
 
-- The stream carries the system audio, as AAC in the MPEG-TS.
-- A MobileSubstrate tweak in `mediaserverd` takes the audio that the apps play.
-- Reason: the human wants the sound of the apps, not the microphone.
-- The video comes first. The audio is a later step.
+- The stream carries only video. It has no audio track.
+- Reason: the human asked to remove all audio. A capture of the system
+  audio reads every sound of the phone, which includes calls, so the
+  project does not do it.
+- To add sound to a recording, OBS takes it from another source, for
+  example a cable from the headphone jack of the phone.
 
 ## The device
 
