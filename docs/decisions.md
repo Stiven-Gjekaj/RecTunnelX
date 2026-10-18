@@ -86,3 +86,34 @@ OBS shows the screen and records it.
   `/System/Library/PrivateFrameworks`.
 - `VideoToolbox.framework` and `AVFoundation.framework` are in
   `/System/Library/Frameworks`.
+
+## The daemon and launchd
+
+- On the test phone, `/var/tmp/launchd` is gone. A cleaner probably removed
+  it. Without that socket, `launchctl load` fails with "Socket is not
+  connected" and still exits with 0. `launchctl list` still works.
+- `launchctl bsexec 1` fails, because `task_for_pid` of launchd is refused.
+- So `postinst` looks for the job in `launchctl list`. If it is not there,
+  `postinst` starts the daemon with `nohup`. launchd starts it at the next
+  boot from `/Library/LaunchDaemons`.
+- Reason: a reboot of the shared test phone stops the work of the other
+  projects.
+
+## The network
+
+- Over USB, `iproxy 7272 7272` forwards the port. ffmpeg on the Mac reads
+  `tcp://127.0.0.1:7272` and `http://127.0.0.1:7272/stream.ts`.
+- On the test network, the router isolates the Wi-Fi clients. The Mac gets no
+  ARP answer from the phone, and a TCP connection from the phone to the Mac
+  times out. The phone reaches the router and the Internet. So the stream
+  over Wi-Fi is not tested.
+- A connection from the phone to its own Wi-Fi address on port 7272 works,
+  so the server listens on that interface.
+
+## The delay
+
+- `scripts/latency.py` presses the Home button with Activator over a shared
+  ssh connection and waits for the first changed frame from ffmpeg.
+- The median of 5 tries is 625 ms over USB at 30 fps and 3 Mbit/s. This time
+  includes Activator and the start of the animation of SpringBoard.
+- `probe/enc.m` measures 26.6 ms from a frame to its encoded output.
