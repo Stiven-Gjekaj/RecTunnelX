@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 200" width="880" height="200">
+  <!-- The logo: the mark and the name. -->
+  <g transform="translate(20 20) scale(0.4)">
+    <g fill="none" stroke-linejoin="round">
+      <rect x="11" y="11" width="298" height="378" rx="42" stroke="#2b2f37" stroke-width="22"/>
+      <rect x="62" y="76" width="196" height="248" rx="28" stroke="#5b6270" stroke-width="16"/>
+      <rect x="104" y="128" width="112" height="144" rx="18" stroke="#8a92a0" stroke-width="11"/>
+    </g>
+    <circle cx="160" cy="200" r="40" fill="#e0261c"/>
+  </g>
+  <text x="175" y="128" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="92"
+        font-weight="700" letter-spacing="-2" fill="#2b2f37">RecTunnel<tspan fill="#e0261c">X</tspan></text>
+</svg>

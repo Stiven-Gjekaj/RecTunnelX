@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <!-- The icon as iOS 6 shows it. An app in /Applications is a system app,
+       so iOS 6 does not round its corners or add the gloss. This file adds
+       both to icon.svg. The corner radius is 10 of 57 pixels, the same as
+       the mask of iOS 6. -->
+  <defs>
+    <clipPath id="corners">
+      <rect width="512" height="512" rx="90" ry="90"/>
+    </clipPath>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#corners)">
+    <image width="512" height="512" xlink:href="icon.svg"/>
+    <!-- The gloss: a light area over the top half, with a curved lower edge. -->
+    <path d="M0 0 H512 V236 C400 270 112 270 0 236 Z" fill="url(#gloss)"/>
+  </g>
+</svg>
