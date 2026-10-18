@@ -1,0 +1,20 @@
+#!/bin/sh
+# Start the daemon, and show the new icon on the home screen.
+LABEL=io.github.stivengjekaj.rectunnelxd
+PLIST=/Library/LaunchDaemons/$LABEL.plist
+launchctl unload "$PLIST" >/dev/null 2>&1
+launchctl load -w "$PLIST" >/dev/null 2>&1
+# launchctl load fails when the socket of launchd is gone, for example after
+# a cleaner removed /var/tmp/launchd. It still exits with 0, so look in the
+# list of jobs. If the job is not there, start the daemon now. launchd
+# starts it at the next boot.
+if ! launchctl list | grep -q "$LABEL"; then
+    killall rectunnelxd >/dev/null 2>&1
+    nohup /usr/libexec/rectunnelxd </dev/null >/dev/null 2>&1 &
+fi
+# uicache runs as the mobile user, because SpringBoard reads the cache of
+# that user.
+if [ -x /usr/bin/uicache ]; then
+    su mobile -c /usr/bin/uicache || /usr/bin/uicache
+fi
+exit 0

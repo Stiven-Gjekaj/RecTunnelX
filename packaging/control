@@ -1,0 +1,11 @@
+Package: io.github.stivengjekaj.rectunnelx
+Name: RecTunnelX
+Version: @VERSION@
+Architecture: iphoneos-arm
+Description: Stream the screen of the phone to OBS over USB or Wi-Fi.
+Maintainer: Stiven Gjekaj <stivenagostingjekaj@gmail.com>
+Author: Stiven Gjekaj <stivenagostingjekaj@gmail.com>
+Section: Utilities
+Depends: firmware (>= 6.0)
+Homepage: https://github.com/Stiven-Gjekaj/RecTunnelX
+Icon: file:///Applications/RecTunnelX.app/Icon@2x.png

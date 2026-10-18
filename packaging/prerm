@@ -1,0 +1,6 @@
+#!/bin/sh
+# Stop the daemon before dpkg removes or replaces its files.
+launchctl unload /Library/LaunchDaemons/io.github.stivengjekaj.rectunnelxd.plist >/dev/null 2>&1
+# A daemon that postinst started without launchd is not in the list of jobs.
+killall rectunnelxd >/dev/null 2>&1
+exit 0
