@@ -13,8 +13,6 @@ is in [docs/decisions.md](docs/decisions.md).
 - The stream over Wi-Fi is not tested. On the test network, the router does
   not let two Wi-Fi clients connect to each other. The server listens on the
   Wi-Fi address, and a connection from the phone to that address works.
-- OBS itself is not tested. ffmpeg on the Mac reads the stream, and the
-  Media Source of OBS uses ffmpeg.
 - When the screen sleeps, the stream is black.
-- If a cleaner removed `/var/tmp/launchd`, `launchctl load` does not work
-  until the next boot. The package then starts the daemon directly.
+- Over ssh, `launchctl load` does not work. The package then starts the
+  daemon directly. launchd starts it at each boot.

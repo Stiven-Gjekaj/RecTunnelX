@@ -111,15 +111,24 @@ clients talk to each other. Then use USB.
 
 **In OBS:**
 
-1. Add a **Media Source**.
-2. Clear **Local File**.
-3. In **Input**, type `tcp://127.0.0.1:7272` for USB, or
-   `tcp://PHONE-ADDRESS:7272` for Wi-Fi.
-4. In **Input Format**, type `mpegts`.
-5. Set **Network Buffering** to 1 MB for a short delay.
+1. Import [obs/RecTunnelX.json](obs/RecTunnelX.json) with
+   **Scene Collection > Import**. It has the source for USB with the
+   settings below.
+2. Or add a **Media Source** yourself. Clear **Local File**, and set:
 
-Or import [obs/RecTunnelX.json](obs/RecTunnelX.json) with
-**Scene Collection > Import**. It has the source for USB.
+| Setting | Value |
+| ------- | ----- |
+| Input | `tcp://127.0.0.1:7272` for USB, or `tcp://PHONE-ADDRESS:7272` for Wi-Fi |
+| Input Format | `mpegts` |
+| Network Buffering | 0 MB |
+| Reconnect Delay | 2 s |
+| Use hardware decoding when available | On |
+| FFmpeg Options | `fflags=nobuffer flags=low_delay probesize=32768 analyzeduration=0` |
+
+For a recording of the phone only, set **Settings > Video** to 640x960 for
+the canvas and the output, at 30 FPS. Then select the source and press
+Cmd+R (Ctrl+R on Windows) to fit it. Use the hardware encoder in
+**Settings > Output**.
 
 Keep the screen of the phone on. When the screen sleeps, the picture is
 black.
