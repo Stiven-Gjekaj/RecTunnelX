@@ -9,7 +9,6 @@ enum {
 
 @interface RXSettings : NSObject <NSCopying>
 @property (nonatomic) BOOL enabled;  // NO stops the stream. The default is YES.
-@property (nonatomic) BOOL audio;  // YES sends the system audio. The default is YES.
 @property (nonatomic) int framesPerSecond;  // 5 to 60. The default is 30.
 @property (nonatomic) int bitsPerSecond;  // 250000 to 10000000. The default is 3000000.
 @property (nonatomic) int scale;  // 1 for 640x960, 2 for 320x480. The default is 1.

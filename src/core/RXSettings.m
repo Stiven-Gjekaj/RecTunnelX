@@ -29,7 +29,6 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
 - (instancetype)init {
     if ((self = [super init])) {
         _enabled = YES;
-        _audio = YES;
         _framesPerSecond = 30;
         _bitsPerSecond = 3000000;
         _scale = 1;
@@ -40,7 +39,6 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
 - (id)copyWithZone:(NSZone *)zone {
     RXSettings *copy = [RXSettings new];
     copy.enabled = self.enabled;
-    copy.audio = self.audio;
     copy.framesPerSecond = self.framesPerSecond;
     copy.bitsPerSecond = self.bitsPerSecond;
     copy.scale = self.scale;
@@ -64,7 +62,6 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:path];
     id value;
     if ([(value = plist[@"enabled"]) isKindOfClass:[NSNumber class]]) settings.enabled = [value boolValue];
-    if ([(value = plist[@"audio"]) isKindOfClass:[NSNumber class]]) settings.audio = [value boolValue];
     if ([(value = plist[@"fps"]) isKindOfClass:[NSNumber class]]) settings.framesPerSecond = [value intValue];
     if ([(value = plist[@"bitrate"]) isKindOfClass:[NSNumber class]]) settings.bitsPerSecond = [value intValue];
     if ([(value = plist[@"scale"]) isKindOfClass:[NSNumber class]]) settings.scale = [value intValue];
@@ -74,7 +71,6 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
 - (NSDictionary *)dictionary {
     return @{
         @"enabled": @(self.enabled),
-        @"audio": @(self.audio),
         @"fps": @(self.framesPerSecond),
         @"bitrate": @(self.bitsPerSecond),
         @"scale": @(self.scale),
@@ -91,13 +87,12 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
         NSString *text = query[key];
         long long number = 0;
         BOOL flag = NO;
-        if ([key isEqualToString:@"enabled"] || [key isEqualToString:@"audio"]) {
+        if ([key isEqualToString:@"enabled"]) {
             if (!RXReadBool(text, &flag)) {
                 if (error) *error = [NSString stringWithFormat:@"%@ is not yes or no", key];
                 return NO;
             }
-            if ([key isEqualToString:@"enabled"]) next.enabled = flag;
-            else next.audio = flag;
+            next.enabled = flag;
         } else if ([key isEqualToString:@"fps"] || [key isEqualToString:@"bitrate"] ||
                    [key isEqualToString:@"scale"]) {
             if (!RXReadInteger(text, &number)) {
@@ -113,7 +108,6 @@ static BOOL RXReadBool(NSString *text, BOOL *value) {
         }
     }
     self.enabled = next.enabled;
-    self.audio = next.audio;
     self.framesPerSecond = next.framesPerSecond;
     self.bitsPerSecond = next.bitsPerSecond;
     self.scale = next.scale;

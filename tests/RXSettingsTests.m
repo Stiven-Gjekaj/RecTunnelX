@@ -9,7 +9,6 @@ static NSString *TemporaryPath(void) {
 RX_TEST(test_settings_defaults_when_file_is_missing) {
     RXSettings *settings = [RXSettings settingsWithContentsOfFile:TemporaryPath()];
     RX_EXPECT(settings.enabled);
-    RX_EXPECT(settings.audio);
     RX_EQUAL_INT(settings.framesPerSecond, 30);
     RX_EQUAL_INT(settings.bitsPerSecond, 3000000);
     RX_EQUAL_INT(settings.scale, 1);
@@ -19,7 +18,6 @@ RX_TEST(test_settings_write_and_read_back) {
     NSString *path = TemporaryPath();
     RXSettings *settings = [RXSettings new];
     settings.enabled = NO;
-    settings.audio = NO;
     settings.framesPerSecond = 24;
     settings.bitsPerSecond = 1500000;
     settings.scale = 2;
