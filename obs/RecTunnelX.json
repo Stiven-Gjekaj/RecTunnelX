@@ -1,0 +1,59 @@
+{
+    "name": "RecTunnelX",
+    "current_scene": "iPhone 4S",
+    "current_program_scene": "iPhone 4S",
+    "scene_order": [
+        {
+            "name": "iPhone 4S"
+        }
+    ],
+    "sources": [
+        {
+            "id": "scene",
+            "versioned_id": "scene",
+            "name": "iPhone 4S",
+            "uuid": "5f3c2a10-7e41-4c2b-9a77-0d3b6a1e2c01",
+            "flags": 0,
+            "mixers": 0,
+            "settings": {
+                "id_counter": 1,
+                "custom_size": false,
+                "items": [
+                    {
+                        "name": "RecTunnelX",
+                        "source_uuid": "5f3c2a10-7e41-4c2b-9a77-0d3b6a1e2c02",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": { "x": 0.0, "y": 0.0 },
+                        "scale": { "x": 1.0, "y": 1.0 },
+                        "align": 5,
+                        "bounds_type": 2,
+                        "bounds_align": 0,
+                        "bounds": { "x": 640.0, "y": 960.0 },
+                        "id": 1
+                    }
+                ]
+            }
+        },
+        {
+            "id": "ffmpeg_source",
+            "versioned_id": "ffmpeg_source",
+            "name": "RecTunnelX",
+            "uuid": "5f3c2a10-7e41-4c2b-9a77-0d3b6a1e2c02",
+            "flags": 0,
+            "mixers": 255,
+            "monitoring_type": 0,
+            "settings": {
+                "is_local_file": false,
+                "input": "tcp://127.0.0.1:7272",
+                "input_format": "mpegts",
+                "reconnect_delay_sec": 2,
+                "restart_on_activate": true,
+                "close_when_inactive": false,
+                "buffering_mb": 1,
+                "hw_decode": true
+            }
+        }
+    ]
+}
