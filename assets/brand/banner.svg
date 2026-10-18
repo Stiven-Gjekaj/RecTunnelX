@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400">
+  <!-- The banner of the README. It has its own dark background, so it looks
+       the same in the light and the dark theme of GitHub. -->
+  <defs>
+    <linearGradient id="back" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#23262d"/>
+      <stop offset="1" stop-color="#121418"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.22" cy="0.5" r="0.45">
+      <stop offset="0" stop-color="#e0261c" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#e0261c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dot" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#ff6b5e"/>
+      <stop offset="0.6" stop-color="#e0261c"/>
+      <stop offset="1" stop-color="#9e1510"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="400" rx="28" fill="url(#back)"/>
+  <rect width="1280" height="400" rx="28" fill="url(#glow)"/>
+
+  <!-- The mark: a tunnel of screens with the red dot of a recording. -->
+  <g transform="translate(214 64)" fill="none" stroke-linejoin="round">
+    <rect x="0" y="0" width="216" height="272" rx="30" stroke="#e8ebf0" stroke-width="12"/>
+    <rect x="36" y="45" width="144" height="182" rx="20" stroke="#9aa1ad" stroke-width="9"/>
+    <rect x="65" y="82" width="86" height="108" rx="13" stroke="#5f6673" stroke-width="7"/>
+    <circle cx="108" cy="136" r="28" fill="url(#dot)" stroke="none"/>
+  </g>
+
+  <text x="502" y="214" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="104"
+        font-weight="700" letter-spacing="-3" fill="#f2f4f7">RecTunnel<tspan fill="#e0261c">X</tspan></text>
+  <text x="506" y="276" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34"
+        font-weight="400" fill="#9aa1ad">The screen of the iPhone 4S in OBS</text>
+</svg>
