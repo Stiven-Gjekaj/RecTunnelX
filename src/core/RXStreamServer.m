@@ -243,8 +243,8 @@ static BOOL RXWriteAll(int fd, const void *bytes, size_t length) {
     }
 }
 
-- (void)notifyClients {
-    NSUInteger count = self.clientCount;
+// Call it while the clients array is locked, so that the events keep their order.
+- (void)notifyClients:(NSUInteger)count {
     void (^changed)(NSUInteger) = self.clientsChanged;
     if (changed) dispatch_async(self.eventQueue, ^{ changed(count); });
 }
@@ -266,9 +266,6 @@ static BOOL RXWriteAll(int fd, const void *bytes, size_t length) {
     client.fd = fd;
     client.queue = dispatch_queue_create("RXStreamServer.client", DISPATCH_QUEUE_SERIAL);
     client.waitingForSync = YES;
-    @synchronized (self.clients) {
-        [self.clients addObject:client];
-    }
     // Watch the socket for the end of the connection. A stream client sends
     // nothing more, so a read of 0 bytes means that it closed.
     dispatch_source_t watch = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, (uintptr_t)fd, 0, client.queue);
@@ -283,8 +280,11 @@ static BOOL RXWriteAll(int fd, const void *bytes, size_t length) {
         }
     });
     client.watch = watch;
+    @synchronized (self.clients) {
+        [self.clients addObject:client];
+        [self notifyClients:self.clients.count];
+    }
     dispatch_resume(watch);
-    [self notifyClients];
     [self notifyKeyFrame];
 }
 
@@ -293,10 +293,10 @@ static BOOL RXWriteAll(int fd, const void *bytes, size_t length) {
         if (client.closed) return;
         client.closed = YES;
         [self.clients removeObject:client];
+        [self notifyClients:self.clients.count];
     }
     if (client.watch) dispatch_source_cancel(client.watch);
     dispatch_async(client.queue, ^{ close(client.fd); });
-    [self notifyClients];
 }
 
 - (void)sendFrame:(NSData *)bytes isSync:(BOOL)isSync {
