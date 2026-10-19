@@ -1,6 +1,7 @@
 #import "RXStreamer.h"
 #import "RXEncoder.h"
 #import "RXMuxer.h"
+#import "RXDisplayAwake.h"
 #import "RXScreen.h"
 #import "RXSettings.h"
 #import "RXStreamServer.h"
@@ -65,6 +66,7 @@ static NSArray *RXAddresses(void) {
 @property (nonatomic, strong) RXStreamServer *server;
 @property (nonatomic, strong) dispatch_queue_t queue;  // Changes the state
 @property (nonatomic, strong) RXScreen *screen;
+@property (nonatomic, strong) RXDisplayAwake *awake;
 @property (atomic, strong) RXEncoder *encoder;
 @property (nonatomic, strong) RXMuxer *muxer;
 @property (nonatomic, strong) NSThread *captureThread;
@@ -134,15 +136,18 @@ static NSArray *RXAddresses(void) {
 - (NSDictionary *)status {
     __block NSDictionary *settings;
     __block BOOL capturing;
+    __block BOOL awake;
     __block NSString *lastError;
     dispatch_sync(self.queue, ^{
         settings = self.settings.dictionary;
         capturing = self.captureThread != nil;
+        awake = self.awake.active;
         lastError = self.lastError;
     });
     NSMutableDictionary *status = [NSMutableDictionary dictionary];
     status[@"settings"] = settings;
     status[@"streaming"] = @(capturing);
+    status[@"awake"] = @(awake);
     status[@"clients"] = @(self.server.clientCount);
     status[@"port"] = @(self.server.port);
     status[@"width"] = @(_width);
@@ -207,7 +212,10 @@ static NSArray *RXAddresses(void) {
     thread.name = @"RXStreamer.capture";
     self.captureThread = thread;
     [thread start];
-    RXLog(@"capture: start %dx%d at %d fps, %d bit/s", width, height, fps, self.settings.bitsPerSecond);
+    // Stop the phone from auto-lock while the stream runs.
+    if (!self.awake) self.awake = [RXDisplayAwake new];
+    RXLog(@"capture: start %dx%d at %d fps, %d bit/s, awake %d", width, height, fps,
+          self.settings.bitsPerSecond, [self.awake setActive:YES]);
 }
 
 - (void)stopCaptureLocked {
@@ -218,6 +226,7 @@ static NSArray *RXAddresses(void) {
     [self.encoder stop];
     self.encoder = nil;
     self.muxer = nil;
+    [self.awake setActive:NO];
     RXLog(@"capture: stop after %lld frames", (long long)_framesSent);
 }
 
