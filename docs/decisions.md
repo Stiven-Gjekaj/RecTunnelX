@@ -80,6 +80,24 @@ OBS shows the screen and records it.
 - To add sound to a recording, OBS takes it from another source, for
   example a cable from the headphone jack of the phone.
 
+## The screen stays awake
+
+- While the daemon captures, it holds a power assertion of the type
+  `PreventUserIdleDisplaySleep`. It makes the assertion with
+  `IOPMAssertionCreateWithName` from `IOKit.framework`, through `dlsym`.
+- iOS 6 has `IOPMAssertionCreateWithName`. The type
+  `PreventUserIdleDisplaySleep` gives result 0. The type `NoDisplaySleep`
+  gives an error, so the code does not use it.
+- The daemon holds the assertion only while a client watches. The status
+  shows `awake`. A test saw `awake` go to true at the first client and back
+  to false when the client left.
+- The assertion stops the idle timer, so the phone does not auto-lock in the
+  middle of a stream. It does not stop a lock from the power button.
+- Not proven: the test phone did not auto-lock in 75 seconds with no
+  assertion, so the test did not show the assertion stop an auto-lock. The
+  assertion is the standard way to stop idle display sleep, and the call
+  gives result 0.
+
 ## The device
 
 - The device is an iPhone 4S (`iPhone4,1`) on iOS 6.1.3, Darwin 13.0.0.

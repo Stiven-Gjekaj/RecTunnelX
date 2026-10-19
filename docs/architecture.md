@@ -57,6 +57,10 @@ The capture and the encoder run only while the stream is enabled and at
 least one client is connected. With no client, the daemon only waits on its
 socket.
 
+While it captures, the daemon holds a power assertion with `RXDisplayAwake`,
+so that the phone does not auto-lock in the middle of a stream. It releases
+the assertion when the capture stops. The status shows `awake`.
+
 ## The settings
 
 `RXSettings` keeps the settings in

@@ -6,6 +6,17 @@ From 1.0.0, a fix raises the patch number, and a new function raises the
 minor number.
 Each release on GitHub has the `.deb` package as an asset.
 
+## 1.0.0 (2026-10-19)
+
+Keep the screen awake.
+
+- While a client watches, the daemon holds a `PreventUserIdleDisplaySleep`
+  power assertion, so the phone does not auto-lock in the middle of a
+  stream. It releases the assertion when the client leaves.
+- The status shows `awake`. A test saw `awake` go to true at the first
+  client and back to false when the client left.
+- A lock from the power button still turns the screen off.
+
 ## 0.2.0 (2026-10-18)
 
 Remove all audio.

@@ -27,8 +27,9 @@ _Hardware H.264 over USB or Wi-Fi, from a jailbroken phone on iOS 6_
 ---
 
 > [!NOTE]
-> **Version 0.2.0 is out.** It sends the video of the screen to OBS at up to
-> 30 frames per second. The stream has no audio.
+> **Version 1.0.0 is out.** It sends the video of the screen to OBS at up to
+> 30 frames per second, and it stops the phone from auto-lock while a client
+> watches. The stream has no audio.
 > [TODO.md](TODO.md) lists the known problems.
 > [docs/decisions.md](docs/decisions.md) holds each decision and its reason.
 
@@ -70,6 +71,7 @@ and changes the quality.
 - Over USB with `iproxy`, or over Wi-Fi
 - Raw TCP for OBS, and HTTP at `/stream.ts` for other players
 - A new client starts at once with a key frame
+- The phone does not auto-lock while a client watches
 - A scene collection for OBS in [obs/RecTunnelX.json](obs/RecTunnelX.json)
 - A status in JSON at `/status`
 
@@ -128,8 +130,8 @@ the canvas and the output, at 30 FPS. Then select the source and press
 Cmd+R (Ctrl+R on Windows) to fit it. Use the hardware encoder in
 **Settings > Output**.
 
-Keep the screen of the phone on. When the screen sleeps, the picture is
-black.
+The phone does not auto-lock while OBS watches the stream. A lock from the
+power button still turns the screen off, and then the picture is black.
 
 ## Build
 
